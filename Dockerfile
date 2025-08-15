@@ -12,17 +12,18 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 
 # Mongo
 RUN ln -s /bin/echo /bin/systemctl
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
-RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-RUN apt-get -y update
-RUN apt-get install -y mongodb-org
+# RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
+# RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+# RUN apt-get -y update
+# RUN apt-get install -y mongodb-org
 
 # Install Yarn
-RUN apt-get install -y yarn
+# RUN apt-get install -y yarn
+RUN apt install nodejs npm -y
+RUN npm install --global yarn
 
 # Install PIP
-RUN easy_install pip
-
+RUN apt install python3-pip -y
 
 ENV ENV_TYPE staging
 ENV MONGO_HOST mongo
@@ -33,6 +34,10 @@ ENV PYTHONPATH=$PYTHONPATH:/src/
 
 # copy the dependencies file to the working directory
 COPY src/requirements.txt .
+
+RUN apt-get -y update
+RUN apt install build-essential libpq-dev python3-dev libatlas-base-dev -y
+
 
 # install dependencies
 RUN pip install -r requirements.txt

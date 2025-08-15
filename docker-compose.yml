@@ -6,8 +6,8 @@ services:
     command: bash -c "cd /src/rest && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
-    links:
-      - mongo
+    # links:
+      # - mongo
     volumes:
       - ${ADBREW_CODEBASE_PATH}/tmp:/tmp
       - ${ADBREW_CODEBASE_PATH}:/src
@@ -15,20 +15,23 @@ services:
   app:
     build: .
     container_name: app
-    command: bash -c "cd /src/app && yarn install && yarn start"
+    command: bash -c "cd /src/app && yarn install --force && yarn start"
     ports:
       - "3000:3000"
+    environment:
+    - NODE_OPTIONS=--openssl-legacy-provider
     volumes:
+      - ${ADBREW_CODEBASE_PATH}/tmp:/tmp
       - ${ADBREW_CODEBASE_PATH}:/src
 
-  mongo:
-    build: .
-    container_name: mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - ${ADBREW_CODEBASE_PATH}/db/:/data/db
-    command: /usr/bin/mongod --bind_ip 0.0.0.0
+  # mongo:
+  #   build: .
+  #   container_name: mongo
+  #   restart: always
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - ${ADBREW_CODEBASE_PATH}/db/:/data/db
+  #   command: /usr/bin/mongod --bind_ip 0.0.0.0
 
     
